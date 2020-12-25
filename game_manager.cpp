@@ -46,6 +46,10 @@ namespace menu {
 		std::cout << std::setw(24) << "WELCOME TO SCRABBLE!\n\n";
 		std::cout << "1.START GAME.  3.ADD NEW WORD.\n2.SETTINGS.    4.EXIT.\n";
 	}
+	void showSettings(short int numOfLetters, short int numOfRounds) {
+		std::cout << "\nCurrent number of letters: " << numOfLetters << std::endl;
+		std::cout << "Current number of rounds: " << numOfRounds << std::endl;
+	}
 
 	void adjustSettings() {
 		short int settingsChoice;
