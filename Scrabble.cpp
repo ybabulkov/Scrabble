@@ -39,26 +39,29 @@ int main() {
 	short int numOfRounds;
 
 	filemanager::loadSettings(numOfLetters, numOfRounds);
-	menu::printMenu();
 
-	choice = choiceInput();
+	while (true) {
+		menu::printMenu();
+		choice = choiceInput();
 
-	switch(choice) {
-		//case 1:
-		//	gameLoop();
-		//	break;
+		switch (choice) {
+			//case 1:
+			//	gameLoop();
+			//	break;
 
-	case 2:
-		menu::adjustSettings();
-		filemanager::loadSettings(numOfLetters, numOfRounds);
-		break;
+			case 2:
+				menu::showSettings(numOfLetters, numOfRounds);
+				menu::adjustSettings();
+				filemanager::loadSettings(numOfLetters, numOfRounds);
+				break;
 
-		//case 3:
-		//	addNewWord();
-		//	break;
+			//case 3:
+			//	addNewWord();
+			//	break;
 
-		//case 4:
-		return 0;
+			case 4:
+			return 0;
+		}
 	}
 }
 
