@@ -1,6 +1,6 @@
 #include<iostream>
 #include<fstream>
-#include"game_controller.h"
+#include"game_manager.h"
 
 int choiceInput() {
 
