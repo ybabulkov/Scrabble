@@ -1,3 +1,17 @@
+/**
+*
+* Solution to course project # 8
+* Introduction to programming course
+* Faculty of Mathematics and Informatics of Sofia University
+* Winter semester 2020/2021
+*
+* @author Yoan Babulkov
+* @idnumber 62601
+* @compiler VC
+*
+* <main cpp file>
+*
+*/
 #include<iostream>
 #include<fstream>
 #include"game_manager.h"
@@ -24,7 +38,7 @@ int main() {
 	short int numOfLetters;
 	short int numOfRounds;
 
-	fm::loadSettings(numOfLetters, numOfRounds);
+	filemanager::loadSettings(numOfLetters, numOfRounds);
 	menu::printMenu();
 
 	choice = choiceInput();
@@ -36,7 +50,7 @@ int main() {
 
 	case 2:
 		menu::adjustSettings();
-		fm::loadSettings(numOfLetters, numOfRounds);
+		filemanager::loadSettings(numOfLetters, numOfRounds);
 		break;
 
 		//case 3:
