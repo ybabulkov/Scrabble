@@ -1,3 +1,18 @@
+/**
+*
+* Solution to course project # 8
+* Introduction to programming course
+* Faculty of Mathematics and Informatics of Sofia University
+* Winter semester 2020/2021
+*
+* @author Yoan Babulkov
+* @idnumber 62601
+* @compiler VC
+*
+* <cpp file with helper functions>
+*
+*/
+
 #include<iostream>
 #include<iomanip>
 #include<fstream>
