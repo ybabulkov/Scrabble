@@ -27,5 +27,11 @@ namespace menu {
 	void adjustSettings();
 }
 
+namespace game {
+	void showLetters(std::string letters);
+	void validateInput(std::string input, std::string letters);
+	bool isInDictionary(std::string input);
+	void gameLoop();
+}
 
 #endif
