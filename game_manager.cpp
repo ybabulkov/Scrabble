@@ -101,16 +101,24 @@ namespace game {
 		std::cout << std::endl;
 	}
 
-	void validateInput(std::string input, std::string letters) {
-		int numLetters = letters.size();
+	bool lengthExceeds(std::string input, std::string letters) {
+		return (input.size() > letters.size() ? true : false);
+	}
+
+	void validateInput(std::string& input, std::string letters) {
 		bool foundLetter = false;
 		bool validInput = false;
 		std::string originalLetters = letters;
-
+	
 		while (!validInput) {
+			while (lengthExceeds(input, letters)) {
+				std::cout << "Length of word exceeds the number of letters given\n";
+				std::cin >> input;
+			}
 			letters = originalLetters;
 			for (int i = 0; i < input.size(); i++) {
-				for (int j = 0; j < numLetters; j++) {
+				foundLetter = false;
+				for (int j = 0; j < letters.size(); j++) {
 					if (input[i] == letters[j]) {
 						foundLetter = true;
 						letters.erase(letters.begin() + j);
@@ -118,15 +126,17 @@ namespace game {
 					}
 				}
 				if (!foundLetter) {
+					validInput = false;
 					std::cout << "Invalid word. Try again with: ";
 					showLetters(originalLetters);
 					std::cin >> input;
 					break;
 				}
+				else {
+					validInput = true;
+				}
 			}
-			validInput = true;
-		}
-		
+		}	
 	}
 
 	bool isInDictionary(std::string input) {
@@ -167,7 +177,7 @@ namespace game {
 			validateInput(playerInput, letters);
 
 			while (!isInDictionary(playerInput)) {
-				std::cout << "Invalid word. Try again with: ";
+				std::cout << "Word not found in Dictionary! Try again with: ";
 				showLetters(letters);
 				std::cin >> playerInput;
 				validateInput(playerInput, letters);
@@ -180,7 +190,6 @@ namespace game {
 		std::cout << "\nReturning to menu...\n";
 	}	
 }
-
 
 
 
