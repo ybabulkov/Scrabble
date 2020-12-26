@@ -13,9 +13,11 @@
 *
 */
 
-#include<iostream>
-#include<iomanip>
-#include<fstream>
+#include<iostream> 
+#include<iomanip>  
+#include<fstream> 
+#include<random> 
+#include<string>
 #include"game_manager.h"
 
 // file manager
@@ -90,4 +92,95 @@ namespace menu {
 		filemanager::saveSettings(numOfLetters, numOfRounds);
 	}
 }
+
+namespace game {
+	void showLetters(std::string letters) {
+		for (int i = 0; i < letters.size(); i++) {
+			std::cout << letters[i] << " ";
+		}
+		std::cout << std::endl;
+	}
+
+	void validateInput(std::string input, std::string letters) {
+		int numLetters = letters.size();
+		bool foundLetter = false;
+		bool validInput = false;
+		std::string originalLetters = letters;
+
+		while (!validInput) {
+			letters = originalLetters;
+			for (int i = 0; i < input.size(); i++) {
+				for (int j = 0; j < numLetters; j++) {
+					if (input[i] == letters[j]) {
+						foundLetter = true;
+						letters.erase(letters.begin() + j);
+						break;
+					}
+				}
+				if (!foundLetter) {
+					std::cout << "Invalid word. Try again with: ";
+					showLetters(originalLetters);
+					std::cin >> input;
+					break;
+				}
+			}
+			validInput = true;
+		}
+		
+	}
+
+	bool isInDictionary(std::string input) {
+		std::string word;
+
+		std::ifstream dict;
+		dict.open("words.txt");
+		while (std::getline(dict, word)) {
+			if (input == word) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void gameLoop() {
+		short int points = 0;
+		short int numLetters, numRounds;
+		filemanager::loadSettings(numLetters, numRounds);
+		
+		std::random_device seed; 
+		std::mt19937 gen(seed());
+		std::uniform_int_distribution<int> interval(97, 122);
+
+		std::string playerInput;
+
+		short int round = 1;
+		while (round <= numRounds) {
+			std::string letters = "";
+			for (int i = 0; i < numLetters; i++) {
+				char letter = char(interval(gen));
+				letters.push_back(letter);
+			}
+			std::cout << "Round " << round << ". Available letters: ";
+			showLetters(letters);
+
+			std::cin >> playerInput;
+			validateInput(playerInput, letters);
+
+			while (!isInDictionary(playerInput)) {
+				std::cout << "Invalid word. Try again with: ";
+				showLetters(letters);
+				std::cin >> playerInput;
+				validateInput(playerInput, letters);
+			}
+			points += playerInput.size();
+			std::cout << "Good job! Your points so far are: " << points << std::endl;
+			round++;
+		}
+		std::cout << "Your total points are " << points;
+		std::cout << "\nReturning to menu...\n";
+	}	
+}
+
+
+
 
