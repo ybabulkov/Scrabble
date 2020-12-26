@@ -45,15 +45,15 @@ int main() {
 		choice = choiceInput();
 
 		switch (choice) {
-			//case 1:
-			//	gameLoop();
-			//	break;
+		case 1:
+			game::gameLoop();
+			break;
 
-			case 2:
-				menu::showSettings(numOfLetters, numOfRounds);
-				menu::adjustSettings();
-				filemanager::loadSettings(numOfLetters, numOfRounds);
-				break;
+		case 2:
+			menu::showSettings(numOfLetters, numOfRounds);
+			menu::adjustSettings();
+			filemanager::loadSettings(numOfLetters, numOfRounds);
+			break;
 
 			//case 3:
 			//	addNewWord();
@@ -62,6 +62,6 @@ int main() {
 			case 4:
 			return 0;
 		}
-	}
+	}	
 }
 
