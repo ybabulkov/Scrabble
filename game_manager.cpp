@@ -14,14 +14,28 @@
 */
 
 #include<iostream> 
-#include<iomanip>  
+#include<string>
 #include<fstream> 
-#include<random> 
+#include<time.h>
+#include<stdlib.h>
 #include<string>
 #include"game_manager.h"
 
+bool isInDictionary(std::string input) {
+	std::string word;
+
+	std::ifstream dict;
+	dict.open("words.txt");
+	while (std::getline(dict, word)) {
+		if (input == word) {
+			return true;
+		}
+	}
+	return false;
+}
+
 // file manager
-namespace filemanager {
+namespace settings {
 
 	void loadSettings(short int& numOfLetters, short int& numOfRounds) {
 
@@ -40,14 +54,7 @@ namespace filemanager {
 		settingsFile << numOfRounds;
 		settingsFile.close();
 	}
-}
 
-//menu manager
-namespace menu {
-	void printMenu() {
-		std::cout << std::setw(24) << "WELCOME TO SCRABBLE!\n\n";
-		std::cout << "1.START GAME.  3.ADD NEW WORD.\n2.SETTINGS.    4.EXIT.\n";
-	}
 	void showSettings(short int numOfLetters, short int numOfRounds) {
 		std::cout << "\nCurrent number of letters: " << numOfLetters << std::endl;
 		std::cout << "Current number of rounds: " << numOfRounds << std::endl;
@@ -59,13 +66,13 @@ namespace menu {
 		short int numOfRounds;
 		bool adjusting = true;
 
-		filemanager::loadSettings(numOfLetters, numOfRounds);
+		settings::loadSettings(numOfLetters, numOfRounds);
 
 		while (adjusting) {
 
-			std::cout << "\n1. CHANGE THE NUMBER OF LETTERS.\n";
-			std::cout << "2. CHANGE THE NUMBER OF ROUNDS.\n";
-			std::cout << "3. BACK TO MENU.\n";
+			std::cout << "\n1. Change the number of letters.\n";
+			std::cout << "2. Change the number of rounds.\n";
+			std::cout << "3. Back to menu.\n";
 
 			std::cin >> settingsChoice;
 			// validity check
@@ -73,23 +80,53 @@ namespace menu {
 				do {
 					std::cin.clear();
 					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-					std::cout << "INVALID INPUT! PLEASE SELECT BETWEEEN OPTIONS 1 and 3!\n";
+					std::cout << "Invalid input! please select betweeen options 1 and 3!\n";
 					std::cin >> settingsChoice;
 				} while (settingsChoice < 1 || settingsChoice > 3);
 			}
 			if (settingsChoice == 1) {
-				std::cout << "\nENTER THE NUMBER OF LETTERS: ";
+				std::cout << "\nEnter the number of letters: ";
 				std::cin >> numOfLetters;
 			}
 			else if (settingsChoice == 2) {
-				std::cout << "ENTER THE NUMBER OF ROUNDS: ";
+				std::cout << "Enter the number of rounds: ";
 				std::cin >> numOfRounds;
 			}
 			else {
 				adjusting = false;
 			}
 		}
-		filemanager::saveSettings(numOfLetters, numOfRounds);
+		settings::saveSettings(numOfLetters, numOfRounds);
+	}
+}
+
+//menu manager
+namespace menu {
+	void printMenu() {
+		std::cout << "\n1.START GAME.  3.ADD NEW WORD.\n2.SETTINGS.    4.EXIT.\n";
+	}
+	
+	void addNewWord() {
+		
+		std::string newWord;
+		bool addingWords = true;
+		while (addingWords) {
+			std::cout << "Please add a word or type 'e' to return to the main menu: ";
+			std::cin >> newWord;
+			if (newWord == "e" || newWord == "E") {
+				break;
+			}
+			if (!isInDictionary(newWord)) {
+				std::ofstream dictFile;
+				dictFile.open("words.txt", std::ios::app);
+				dictFile << std::endl << newWord;
+				dictFile.close();
+				std::cout << newWord << " Has successfully been added to the dictionary\n";
+			}
+			else {
+				std::cout << "This word is already in the dictionary!\n";
+			}
+		}
 	}
 }
 
@@ -112,7 +149,7 @@ namespace game {
 	
 		while (!validInput) {
 			while (lengthExceeds(input, letters)) {
-				std::cout << "Length of word exceeds the number of letters given\n";
+				std::cout << "The length of the word exceeds the number of letters given!\n";
 				std::cin >> input;
 			}
 			letters = originalLetters;
@@ -139,35 +176,19 @@ namespace game {
 		}	
 	}
 
-	bool isInDictionary(std::string input) {
-		std::string word;
-
-		std::ifstream dict;
-		dict.open("words.txt");
-		while (std::getline(dict, word)) {
-			if (input == word) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	void gameLoop() {
 		short int points = 0;
 		short int numLetters, numRounds;
-		filemanager::loadSettings(numLetters, numRounds);
-		
-		std::random_device seed; 
-		std::mt19937 gen(seed());
-		std::uniform_int_distribution<int> interval(97, 122);
+		settings::loadSettings(numLetters, numRounds);
 
 		std::string playerInput;
+		std::srand(time(0));
 
 		short int round = 1;
 		while (round <= numRounds) {
 			std::string letters = "";
 			for (int i = 0; i < numLetters; i++) {
-				char letter = char(interval(gen));
+				char letter = char(rand() % 25 + 97);
 				letters.push_back(letter);
 			}
 			std::cout << "Round " << round << ". Available letters: ";
@@ -190,6 +211,4 @@ namespace game {
 		std::cout << "\nReturning to menu...\n";
 	}	
 }
-
-
 
