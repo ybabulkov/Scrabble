@@ -14,6 +14,7 @@
 */
 #include<iostream>
 #include<fstream>
+#include<iomanip>  
 #include"game_manager.h"
 
 int choiceInput() {
@@ -25,7 +26,7 @@ int choiceInput() {
 		do {
 			std::cin.clear();
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			std::cout << "INVALID INPUT! PLEASE SELECT BETWEEEN OPTIONS 1-4!\n";
+			std::cout << "Invalid input! please select betweeen options 1-4!\n";
 			std::cin >> _choice;
 		} while (_choice < 1 || _choice > 4);
 	}
@@ -38,8 +39,9 @@ int main() {
 	short int numOfLetters;
 	short int numOfRounds;
 
-	filemanager::loadSettings(numOfLetters, numOfRounds);
+	settings::loadSettings(numOfLetters, numOfRounds);
 
+	std::cout << std::setw(24) << "WELCOME TO SCRABBLE!\n";
 	while (true) {
 		menu::printMenu();
 		choice = choiceInput();
@@ -50,16 +52,17 @@ int main() {
 			break;
 
 		case 2:
-			menu::showSettings(numOfLetters, numOfRounds);
-			menu::adjustSettings();
-			filemanager::loadSettings(numOfLetters, numOfRounds);
+			settings::showSettings(numOfLetters, numOfRounds);
+			settings::adjustSettings();
+			settings::loadSettings(numOfLetters, numOfRounds);
 			break;
 
-			//case 3:
-			//	addNewWord();
-			//	break;
+		case 3:
+			menu::addNewWord();
+			break;
 
-			case 4:
+		case 4:
+			std::cout << "Exiting game...";
 			return 0;
 		}
 	}	
