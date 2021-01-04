@@ -121,7 +121,7 @@ namespace menu {
 				dictFile.open("words.txt", std::ios::app);
 				dictFile << std::endl << newWord;
 				dictFile.close();
-				std::cout << newWord << " Has successfully been added to the dictionary\n";
+				std::cout << newWord << " has successfully been added to the dictionary\n";
 			}
 			else {
 				std::cout << "This word is already in the dictionary!\n";
@@ -176,6 +176,32 @@ namespace game {
 		}	
 	}
 
+	int countVowels(std::string letters) {
+		int vowelCount = 0;
+		char vowels[7] = "aeiouy";
+		for (int i = 0; i < letters.size(); i++) {
+			for (int j = 0; j < sizeof(vowels); j++) {
+				if (letters[i] == vowels[j]) {
+					vowelCount++;
+				}
+			}
+		}
+		return vowelCount;
+	}
+
+	std::string generateLetters(int numLetters) {
+		const int MIN_NUMBER_VOWELS = numLetters / 3 + 1;
+		std::string letters = "";
+		do {
+			letters.clear();
+			for (int i = 0; i < numLetters; i++) {
+				char letter = char(rand() % 25 + 97);
+				letters.push_back(letter);
+			}
+		} while (countVowels(letters) < MIN_NUMBER_VOWELS);
+		return letters;
+	}
+
 	void gameLoop() {
 		short int points = 0;
 		short int numLetters, numRounds;
@@ -186,11 +212,7 @@ namespace game {
 
 		short int round = 1;
 		while (round <= numRounds) {
-			std::string letters = "";
-			for (int i = 0; i < numLetters; i++) {
-				char letter = char(rand() % 25 + 97);
-				letters.push_back(letter);
-			}
+			std::string letters = generateLetters(numLetters);
 			std::cout << "Round " << round << ". Available letters: ";
 			showLetters(letters);
 
