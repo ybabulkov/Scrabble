@@ -36,6 +36,8 @@ namespace game {
 	void showLetters(std::string letters);
 	bool lengthExceeds(std::string input, std::string letters);
 	void validateInput(std::string& input, std::string letters);
+	int countVowels(std::string letters);
+	std::string generateLetters(int numLetters);
 	void gameLoop();
 }
 #endif
