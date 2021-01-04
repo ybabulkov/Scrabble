@@ -29,6 +29,8 @@ namespace settings {
 //menu manager
 namespace menu {
 	void printMenu();
+	bool checkIfValid(std::string word);
+	void toLower(std::string& word);
 	void addNewWord();
 }
 
