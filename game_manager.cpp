@@ -15,6 +15,7 @@
 
 #include<iostream> 
 #include<string>
+#include<iomanip>
 #include<fstream> 
 #include<time.h>
 #include<stdlib.h>
@@ -56,8 +57,35 @@ namespace settings {
 	}
 
 	void showSettings(short int numOfLetters, short int numOfRounds) {
+		std::cout << std::endl << std::setw(18) <<"SETTINGS";
 		std::cout << "\nCurrent number of letters: " << numOfLetters << std::endl;
 		std::cout << "Current number of rounds: " << numOfRounds << std::endl;
+		std::cout << "1.Easy mode (20 letters, 10 rounds)" << std::endl 
+				  << "2.Normal mode (10 letters, 10 rounds)" << std::endl << "3.Hard mode (6 letters, 10 rounds)" << std::endl;
+		std::cout << "4.Adjust custom settings" << std::endl;
+		int choice = menu::choiceInput();
+		int numLetters = 0;
+		int numRounds = 10;
+		switch (choice) {
+			case 1:
+				numLetters = 20;
+				saveSettings(numLetters, numRounds);
+				std::cout << "Set to \"Easy mode\"" << std::endl;
+				break;
+			case 2:
+				numLetters = 10;
+				saveSettings(numLetters, numRounds);
+				std::cout << "Set to \"Nomral mode\"" << std::endl;
+				break;
+			case 3:
+				numLetters = 6;
+				saveSettings(numLetters, numRounds);
+				std::cout << "Set to \"Hard mode\"" << std::endl;
+				break;
+			case 4:
+				adjustSettings();
+				break;
+		}
 	}
 
 	void adjustSettings() {
@@ -66,7 +94,7 @@ namespace settings {
 		short int numOfRounds;
 		bool adjusting = true;
 
-		settings::loadSettings(numOfLetters, numOfRounds);
+		loadSettings(numOfLetters, numOfRounds);
 
 		while (adjusting) {
 
@@ -96,7 +124,7 @@ namespace settings {
 				adjusting = false;
 			}
 		}
-		settings::saveSettings(numOfLetters, numOfRounds);
+		saveSettings(numOfLetters, numOfRounds);
 	}
 }
 
@@ -104,6 +132,21 @@ namespace settings {
 namespace menu {
 	void printMenu() {
 		std::cout << "\n1.START GAME.  3.ADD NEW WORD.\n2.SETTINGS.    4.EXIT.\n";
+	}
+
+	int choiceInput() {
+		short int choice;
+		std::cin >> choice;
+		// validity check
+		if (choice < 1 || choice > 4) {
+			do {
+				std::cin.clear();
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+				std::cout << "Invalid input! please select betweeen options 1-4!\n";
+				std::cin >> choice;
+			} while (choice < 1 || choice > 4);
+		}
+		return choice;
 	}
 
 	bool checkIfValid(std::string word) {
