@@ -105,17 +105,40 @@ namespace menu {
 	void printMenu() {
 		std::cout << "\n1.START GAME.  3.ADD NEW WORD.\n2.SETTINGS.    4.EXIT.\n";
 	}
+
+	bool checkIfValid(std::string word) {
+		bool valid = true;
+		for (int i = 0; i < word.size(); i++) {
+			if (word[i] < 65 || (word[i] > 90 && word[i] < 97) || word[i] > 122) {
+				valid = false;
+			}
+		}
+		return valid;
+	}
+
+	void toLower(std::string& word) {
+		for (int i = 0; i < word.size(); i++) {
+			if (word[i] < 97) {
+				//converts uppercase to lowercase using the ascii table
+				word[i] += 32;
+			}
+		}
+	}
 	
 	void addNewWord() {
-		
 		std::string newWord;
 		bool addingWords = true;
 		while (addingWords) {
 			std::cout << "Please add a word or type 'e' to return to the main menu: ";
 			std::cin >> newWord;
+			while (!checkIfValid(newWord)) {
+				std::cout << "Invalid word! Word must contain only letters!";
+				std::cin >> newWord;
+			}
 			if (newWord == "e" || newWord == "E") {
 				break;
 			}
+			toLower(newWord);
 			if (!isInDictionary(newWord)) {
 				std::ofstream dictFile;
 				dictFile.open("words.txt", std::ios::app);
