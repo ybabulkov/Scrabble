@@ -17,21 +17,6 @@
 #include<iomanip>  
 #include"game_manager.h"
 
-int choiceInput() {
-
-	short int _choice;
-	std::cin >> _choice;
-	// validity check
-	if (_choice < 1 || _choice > 4) {
-		do {
-			std::cin.clear();
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			std::cout << "Invalid input! please select betweeen options 1-4!\n";
-			std::cin >> _choice;
-		} while (_choice < 1 || _choice > 4);
-	}
-	return _choice;
-}
 
 int main() {
 	short int choice;
@@ -44,7 +29,7 @@ int main() {
 	std::cout << std::setw(24) << "WELCOME TO SCRABBLE!\n";
 	while (true) {
 		menu::printMenu();
-		choice = choiceInput();
+		choice = menu::choiceInput();
 
 		switch (choice) {
 		case 1:
@@ -53,7 +38,6 @@ int main() {
 
 		case 2:
 			settings::showSettings(numOfLetters, numOfRounds);
-			settings::adjustSettings();
 			settings::loadSettings(numOfLetters, numOfRounds);
 			break;
 
