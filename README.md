@@ -6,6 +6,7 @@
   2. Settings
   3. Add new word
   4. Exit
+  
   *Choosing an option is as simple as entering the number preceding it into the console.*
   
 ### **The core game loop**
