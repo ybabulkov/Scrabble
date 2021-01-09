@@ -17,9 +17,8 @@
 #include<string>
 #include<iomanip>
 #include<fstream> 
-#include<time.h>
-#include<stdlib.h>
-#include<string>
+#include<ctime>
+#include<cstdlib>
 #include"game_manager.h"
 
 bool isInDictionary(std::string input) {
@@ -60,35 +59,15 @@ namespace settings {
 		std::cout << std::endl << std::setw(18) <<"SETTINGS";
 		std::cout << "\nCurrent number of letters: " << numOfLetters << std::endl;
 		std::cout << "Current number of rounds: " << numOfRounds << std::endl;
-		std::cout << "1.Easy mode (20 letters, 10 rounds)" << std::endl 
-				  << "2.Normal mode (10 letters, 10 rounds)" << std::endl << "3.Hard mode (6 letters, 10 rounds)" << std::endl;
-		std::cout << "4.Adjust custom settings" << std::endl;
-		int choice = menu::choiceInput();
-		int numLetters = 0;
-		int numRounds = 10;
-		switch (choice) {
-			case 1:
-				numLetters = 20;
-				saveSettings(numLetters, numRounds);
-				std::cout << "Set to \"Easy mode\"" << std::endl;
-				break;
-			case 2:
-				numLetters = 10;
-				saveSettings(numLetters, numRounds);
-				std::cout << "Set to \"Nomral mode\"" << std::endl;
-				break;
-			case 3:
-				numLetters = 6;
-				saveSettings(numLetters, numRounds);
-				std::cout << "Set to \"Hard mode\"" << std::endl;
-				break;
-			case 4:
-				adjustSettings();
-				break;
-		}
+		std::cout << "1. Easy mode (20 letters, 10 rounds)" << std::endl 
+				  << "2. Normal mode (10 letters, 10 rounds)" << std::endl 
+				  << "3. Hard mode (6 letters, 10 rounds)" << std::endl;
+		std::cout << "4. Adjust custom settings" << std::endl;
+		std::cout << "5. Return to menu" << std::endl;
+		adjustSettings();
 	}
 
-	void adjustSettings() {
+	void customSettings() {
 		short int settingsChoice;
 		short int numOfLetters;
 		short int numOfRounds;
@@ -126,6 +105,54 @@ namespace settings {
 		}
 		saveSettings(numOfLetters, numOfRounds);
 	}
+
+	void adjustSettings() {
+
+		short int choice = 0;
+		short int numLetters = 0;
+		short int numRounds = 10;
+		bool awaitingInput = true;
+		while (awaitingInput) {
+			std::cin >> choice;
+			switch (choice) {
+			case 1:
+				numLetters = 20;
+				saveSettings(numLetters, numRounds);
+				std::cout << "Set to \"Easy mode\"" << std::endl;
+				showSettings(numLetters, numRounds);
+				awaitingInput = false;
+				break;
+			case 2:
+				numLetters = 10;
+				saveSettings(numLetters, numRounds);
+				std::cout << "Set to \"Normal mode\"" << std::endl;
+				showSettings(numLetters, numRounds);
+				awaitingInput = false;
+				break;
+			case 3:
+				numLetters = 6;
+				saveSettings(numLetters, numRounds);
+				std::cout << "Set to \"Hard mode\"" << std::endl;
+				showSettings(numLetters, numRounds);
+				awaitingInput = false;
+				break;
+			case 4:
+				customSettings();
+				awaitingInput = false;
+				loadSettings(numLetters, numRounds);
+				showSettings(numLetters, numRounds);
+				break;
+			case 5:
+				awaitingInput = false;
+				break;
+			default:
+				std::cout << "Invalid input!" << std::endl;
+				std::cin.clear();
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+				break;
+			}
+		}
+	}
 }
 
 //menu manager
@@ -151,7 +178,7 @@ namespace menu {
 
 	bool checkIfValid(std::string word) {
 		bool valid = true;
-		for (int i = 0; i < word.size(); i++) {
+		for (size_t i = 0; i < word.size(); i++) {
 			if (word[i] < 65 || (word[i] > 90 && word[i] < 97) || word[i] > 122) {
 				valid = false;
 			}
@@ -160,7 +187,7 @@ namespace menu {
 	}
 
 	void toLower(std::string& word) {
-		for (int i = 0; i < word.size(); i++) {
+		for (size_t i = 0; i < word.size(); i++) {
 			if (word[i] < 97) {
 				//converts uppercase to lowercase using the ascii table
 				word[i] += 32;
@@ -175,7 +202,7 @@ namespace menu {
 			std::cout << "Please add a word or type 'e' to return to the main menu: ";
 			std::cin >> newWord;
 			while (!checkIfValid(newWord)) {
-				std::cout << "Invalid word! Word must contain only letters!";
+				std::cout << "Invalid word! Word must contain only letters! Try again: ";
 				std::cin >> newWord;
 			}
 			if (newWord == "e" || newWord == "E") {
@@ -198,7 +225,7 @@ namespace menu {
 
 namespace game {
 	void showLetters(std::string letters) {
-		for (int i = 0; i < letters.size(); i++) {
+		for (size_t i = 0; i < letters.size(); i++) {
 			std::cout << letters[i] << " ";
 		}
 		std::cout << std::endl;
@@ -209,19 +236,32 @@ namespace game {
 	}
 
 	void validateInput(std::string& input, std::string letters) {
+		int numOfTries = 0;
 		bool foundLetter = false;
 		bool validInput = false;
+		int multiplier = 1;
 		std::string originalLetters = letters;
 	
 		while (!validInput) {
+
+			if (input == "e" || input == "E") {
+				input == "e";
+				return;
+			}
+
+			if (numOfTries == 3 * multiplier) {
+				multiplier++;
+				std::cout << "Reminder: If you're stuck, you can return to the menu by entering \"e\"" << std::endl;
+			}
+			numOfTries++;
 			while (lengthExceeds(input, letters)) {
 				std::cout << "The length of the word exceeds the number of letters given!\n";
 				std::cin >> input;
 			}
 			letters = originalLetters;
-			for (int i = 0; i < input.size(); i++) {
+			for (size_t i = 0; i < input.size(); i++) {
 				foundLetter = false;
-				for (int j = 0; j < letters.size(); j++) {
+				for (size_t j = 0; j < letters.size(); j++) {
 					if (input[i] == letters[j]) {
 						foundLetter = true;
 						letters.erase(letters.begin() + j);
@@ -240,12 +280,20 @@ namespace game {
 				}
 			}
 		}	
+		if (validInput) {
+			while (!isInDictionary(input)) {
+				std::cout << "Word not found in Dictionary! Try again with: ";
+				showLetters(letters);
+				std::cin >> input;
+				validateInput(input, letters);
+			}
+		}
 	}
 
 	int countVowels(std::string letters) {
 		int vowelCount = 0;
 		char vowels[7] = "aeiouy";
-		for (int i = 0; i < letters.size(); i++) {
+		for (size_t i = 0; i < letters.size(); i++) {
 			for (int j = 0; j < sizeof(vowels); j++) {
 				if (letters[i] == vowels[j]) {
 					vowelCount++;
@@ -256,7 +304,7 @@ namespace game {
 	}
 
 	std::string generateLetters(int numLetters) {
-		const int MIN_NUMBER_VOWELS = numLetters / 3 + 1;
+		const int MIN_NUMBER_VOWELS = numLetters / 4 + 1;
 		std::string letters = "";
 		do {
 			letters.clear();
@@ -269,13 +317,13 @@ namespace game {
 	}
 
 	void gameLoop() {
-		short int points = 0;
+		size_t points = 0;
 		short int numLetters, numRounds;
 		settings::loadSettings(numLetters, numRounds);
 
 		std::string playerInput;
-		std::srand(time(0));
-
+		std::srand(unsigned int(time(0)));
+		std::cout << "If you choose to return to the menu, you can do it at anytime by entering \"e\"" << std::endl;
 		short int round = 1;
 		while (round <= numRounds) {
 			std::string letters = generateLetters(numLetters);
@@ -284,13 +332,10 @@ namespace game {
 
 			std::cin >> playerInput;
 			validateInput(playerInput, letters);
-
-			while (!isInDictionary(playerInput)) {
-				std::cout << "Word not found in Dictionary! Try again with: ";
-				showLetters(letters);
-				std::cin >> playerInput;
-				validateInput(playerInput, letters);
+			if (playerInput == "e") {
+				break;
 			}
+
 			points += playerInput.size();
 			std::cout << "Good job! Your points so far are: " << points << std::endl;
 			round++;
