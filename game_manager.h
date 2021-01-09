@@ -21,14 +21,17 @@ bool isInDictionary(std::string input);
 namespace settings {
 	void loadSettings(short int& numOfLetters, short int& numOfRounds);
 	void saveSettings(short int numOfLetters, short int numOfRounds);
-	void adjustSettings();
 	void showSettings(short int numOfLetters, short int numOfRounds);
+	void customSettings();
+	void adjustSettings();
+	
 }
 
 
 //menu manager
 namespace menu {
 	void printMenu();
+	int choiceInput();
 	bool checkIfValid(std::string word);
 	void toLower(std::string& word);
 	void addNewWord();
