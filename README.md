@@ -11,9 +11,9 @@
   
 ### **The core game loop**
   Upon entering '1' into the console the game starts, showing the first round. There are M amount of rounds. 
-  In each round the user is presented with N amount of letters (both M and N are predetermined by the user, with default value of 10)
+  In each round the user is presented with N amount of letters (both M and N are predetermined by the user, with default value of 10).
   The goal is to compose a word with the letters given and each letter in the word gives the user +1 point
-  *house - 5 points, cat - 3 points etc.*
+  (*house - 5 points, cat - 3 points etc.*)
   The input from the user, however, must be an actual word, so there's a validity check (search through a dictionary consisting of 250 000+ words).
   At the end of the last round the user is shown his final score and directed back to the main menu.
   
