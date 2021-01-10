@@ -20,7 +20,6 @@
 
 int main() {
 	short int choice;
-	
 	short int numOfLetters;
 	short int numOfRounds;
 
@@ -35,17 +34,17 @@ int main() {
 		case 1:
 			game::gameLoop();
 			break;
-
 		case 2:
 			settings::showSettings(numOfLetters, numOfRounds);
 			settings::loadSettings(numOfLetters, numOfRounds);
 			break;
-
 		case 3:
 			menu::addNewWord();
 			break;
-
 		case 4:
+			menu::showAchievements();
+			break;
+		case 5:
 			std::cout << "Exiting game...";
 			return 0;
 		}
