@@ -34,14 +34,12 @@ bool isInDictionary(std::string input) {
 	return false;
 }
 
-// file manager
 namespace settings {
 
 	void loadSettings(short int& numOfLetters, short int& numOfRounds) {
 
 		std::ifstream settingsFile;
 		settingsFile.open("settings.txt");
-		// function from the header file under the file manager namespace
 		settingsFile >> numOfLetters;
 		settingsFile >> numOfRounds;
 
@@ -63,7 +61,7 @@ namespace settings {
 				  << "2. Normal mode (10 letters, 10 rounds)" << std::endl 
 				  << "3. Hard mode (6 letters, 10 rounds)" << std::endl;
 		std::cout << "4. Adjust custom settings" << std::endl;
-		std::cout << "5. Return to menu" << std::endl;
+		std::cout << "5. Return to main menu" << std::endl;
 		adjustSettings();
 	}
 
@@ -79,14 +77,14 @@ namespace settings {
 
 			std::cout << "\n1. Change the number of letters.\n";
 			std::cout << "2. Change the number of rounds.\n";
-			std::cout << "3. Back to menu.\n";
+			std::cout << "3. Back to settings menu.\n";
 
 			std::cin >> settingsChoice;
 			// validity check
 			if (settingsChoice < 1 || settingsChoice > 3) {
 				do {
 					std::cin.clear();
-					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+					std::cin.ignore(INT_MAX, '\n');
 					std::cout << "Invalid input! please select betweeen options 1 and 3!\n";
 					std::cin >> settingsChoice;
 				} while (settingsChoice < 1 || settingsChoice > 3);
@@ -148,30 +146,30 @@ namespace settings {
 			default:
 				std::cout << "Invalid input!" << std::endl;
 				std::cin.clear();
-				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+				std::cin.ignore(INT_MAX, '\n');
 				break;
 			}
 		}
 	}
 }
 
-//menu manager
+
 namespace menu {
 	void printMenu() {
-		std::cout << "\n1.START GAME.  3.ADD NEW WORD.\n2.SETTINGS.    4.EXIT.\n";
+		std::cout << "\n1.START GAME.  3.ADD NEW WORD.\n2.SETTINGS.    4.ACHIEVEMENTS.\n"  << std::setw(18) << "5.EXIT.\n";
 	}
 
-	int choiceInput() {
+	short int choiceInput() {
 		short int choice;
 		std::cin >> choice;
 		// validity check
-		if (choice < 1 || choice > 4) {
+		if (choice < 1 || choice > 5) {
 			do {
 				std::cin.clear();
-				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				std::cout << "Invalid input! please select betweeen options 1-4!\n";
+				std::cin.ignore(INT_MAX, '\n');
+				std::cout << "Invalid input! please select betweeen options 1-5!\n";
 				std::cin >> choice;
-			} while (choice < 1 || choice > 4);
+			} while (choice < 1 || choice > 5);
 		}
 		return choice;
 	}
@@ -221,6 +219,27 @@ namespace menu {
 			}
 		}
 	}
+
+	void showAchievements() {
+		std::string longestWord = "";
+		int highscore = 0;
+		std::ifstream achievementsFile;
+		achievementsFile.open("achievements.txt");
+		if (achievementsFile.fail()) {
+			std::cout << "Error occured while loading achievements..." << std::endl;
+		}
+		// checks if file is empty
+		if (achievementsFile.peek() == std::ifstream::traits_type::eof()) {
+			std::cout << "You have no achievements yet!" << std::endl;
+		}
+		else {
+			achievementsFile >> longestWord;
+			achievementsFile >> highscore;
+			std::cout << "Longest word: " << longestWord << std::endl;
+			std::cout << "Highscore: " << highscore << std::endl;
+		}
+		achievementsFile.close();
+	}
 }
 
 namespace game {
@@ -235,8 +254,8 @@ namespace game {
 		return (input.size() > letters.size() ? true : false);
 	}
 
-	void validateInput(std::string& input, std::string letters) {
-		int numOfTries = 0;
+	int validateInput(std::string& input, std::string letters) {
+		int numOfTries = 1;
 		bool foundLetter = false;
 		bool validInput = false;
 		int multiplier = 1;
@@ -245,8 +264,7 @@ namespace game {
 		while (!validInput) {
 
 			if (input == "e" || input == "E") {
-				input == "e";
-				return;
+				return -1;
 			}
 
 			if (numOfTries == 3 * multiplier) {
@@ -257,6 +275,9 @@ namespace game {
 			while (lengthExceeds(input, letters)) {
 				std::cout << "The length of the word exceeds the number of letters given!\n";
 				std::cin >> input;
+				if (input == "e" || input == "E") {
+					return -1;
+				}
 			}
 			letters = originalLetters;
 			for (size_t i = 0; i < input.size(); i++) {
@@ -282,12 +303,16 @@ namespace game {
 		}	
 		if (validInput) {
 			while (!isInDictionary(input)) {
+				letters = originalLetters;
 				std::cout << "Word not found in Dictionary! Try again with: ";
 				showLetters(letters);
 				std::cin >> input;
-				validateInput(input, letters);
+				if (validateInput(input, letters) == -1) {
+					return -1;
+				}
 			}
 		}
+		return 0;
 	}
 
 	int countVowels(std::string letters) {
@@ -304,6 +329,7 @@ namespace game {
 	}
 
 	std::string generateLetters(int numLetters) {
+		std::srand(unsigned int(time(0)));
 		const int MIN_NUMBER_VOWELS = numLetters / 4 + 1;
 		std::string letters = "";
 		do {
@@ -317,12 +343,13 @@ namespace game {
 	}
 
 	void gameLoop() {
+		std::string longestWord = "";
 		size_t points = 0;
 		short int numLetters, numRounds;
+
 		settings::loadSettings(numLetters, numRounds);
 
 		std::string playerInput;
-		std::srand(unsigned int(time(0)));
 		std::cout << "If you choose to return to the menu, you can do it at anytime by entering \"e\"" << std::endl;
 		short int round = 1;
 		while (round <= numRounds) {
@@ -331,17 +358,49 @@ namespace game {
 			showLetters(letters);
 
 			std::cin >> playerInput;
-			validateInput(playerInput, letters);
-			if (playerInput == "e") {
+
+			if (validateInput(playerInput, letters) == -1) {
 				break;
 			}
 
-			points += playerInput.size();
+			if (playerInput.length() > longestWord.length()) {
+				longestWord = playerInput;
+			}
+			points += playerInput.length();
 			std::cout << "Good job! Your points so far are: " << points << std::endl;
 			round++;
 		}
+		updateAchievements(longestWord, points);
 		std::cout << "Your total points are " << points;
 		std::cout << "\nReturning to menu...\n";
-	}	
+	}
+
+	void updateAchievements(std::string longestWord, int highscore) {
+		// no need to update if the player exited during the first round
+		if (highscore != 0) {
+			std::ifstream achievementsFileRead;
+			std::string word;
+			int score = 0;
+			achievementsFileRead.open("achievements.txt");
+			achievementsFileRead >> word;
+			achievementsFileRead >> score;
+			achievementsFileRead.close();
+
+			std::ofstream achievementsFileWrite("achievements.txt");
+			if (longestWord.length() > word.length()) {
+				achievementsFileWrite << longestWord << std::endl;
+			}
+			else {
+				achievementsFileWrite << word << std::endl;
+			}
+			if (highscore > score) {
+				achievementsFileWrite << highscore << std::endl;
+			}
+			else {
+				achievementsFileWrite << score << std::endl;
+			}
+			achievementsFileWrite.close();
+		}
+	}
 }
 
