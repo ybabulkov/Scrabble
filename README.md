@@ -5,7 +5,8 @@
   1. Start game
   2. Settings
   3. Add new word
-  4. Exit
+  4. Achievements
+  5. Exit
   
   *Choosing an option is as simple as entering the number preceding it into the console.*
   
@@ -22,5 +23,8 @@
   
 ### **Add new word**
   The user can add a new word into the dictionary file. There are checks ensuring the word consists only of letters and that it isn't already in the dictionary.
+  
+### **Achievements**
+  Shows the user's highscore and the longest word he has composed.
   
   
