@@ -81,7 +81,7 @@ namespace settings {
 
 			std::cin >> settingsChoice;
 			// validity check
-			if (settingsChoice < 1 || settingsChoice > 3) {
+			if (settingsChoice < 1 || settingsChoice > 3 || std::cin.fail()) {
 				do {
 					std::cin.clear();
 					std::cin.ignore(INT_MAX, '\n');
