@@ -17,32 +17,31 @@
 
 bool isInDictionary(std::string input);
 
-// file manager
 namespace settings {
 	void loadSettings(short int& numOfLetters, short int& numOfRounds);
 	void saveSettings(short int numOfLetters, short int numOfRounds);
 	void showSettings(short int numOfLetters, short int numOfRounds);
 	void customSettings();
 	void adjustSettings();
-	
 }
 
 
-//menu manager
 namespace menu {
 	void printMenu();
-	int choiceInput();
+	short int choiceInput();
 	bool checkIfValid(std::string word);
 	void toLower(std::string& word);
 	void addNewWord();
+	void showAchievements();
 }
 
 namespace game {
 	void showLetters(std::string letters);
 	bool lengthExceeds(std::string input, std::string letters);
-	void validateInput(std::string& input, std::string letters);
+	int validateInput(std::string& input, std::string letters);
 	int countVowels(std::string letters);
 	std::string generateLetters(int numLetters);
 	void gameLoop();
+	void updateAchievements(std::string longestWord, int highscore);
 }
 #endif
